@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   try {
     const { id } = await params;
-    const existing = await prisma.contact.findUnique({ where: { id } });
+    const existing = await prisma.contact.findFirst({ where: { id, agentId: userId } });
     if (!existing) {
       return NextResponse.json({ error: "Contact not found" }, { status: 404 });
     }
@@ -68,7 +68,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
   try {
     const { id } = await params;
-    const existing = await prisma.contact.findUnique({ where: { id } });
+    const existing = await prisma.contact.findFirst({ where: { id, agentId: userId } });
     if (!existing) {
       return NextResponse.json({ error: "Contact not found" }, { status: 404 });
     }

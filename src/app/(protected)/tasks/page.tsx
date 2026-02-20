@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { format, startOfDay } from "date-fns";
+import TaskCompleteButton from "@/components/TaskCompleteButton";
 
 export default async function TasksPage() {
   const session = await auth();
@@ -70,6 +71,7 @@ export default async function TasksPage() {
                       <span className={`text-xs px-2 py-1 rounded-full ${task.status === "IN_PROGRESS" ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"}`}>
                         {task.status.replace("_", " ")}
                       </span>
+                      <TaskCompleteButton taskId={task.id} />
                     </li>
                   ))}
                 </ul>

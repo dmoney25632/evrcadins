@@ -14,8 +14,8 @@ export default async function EditContactPage({ params }: EditContactPageProps) 
   if (!userId) return null;
 
   const { id } = await params;
-  const contact = await prisma.contact.findUnique({
-    where: { id },
+  const contact = await prisma.contact.findFirst({
+    where: { id, agentId: userId },
   });
   if (!contact) notFound();
 
