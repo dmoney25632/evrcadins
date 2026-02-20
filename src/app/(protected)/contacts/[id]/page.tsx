@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { canRevealSensitiveData } from "@/lib/rbac";
 import { maskMedicareNumber, decrypt } from "@/lib/encryption";
 import Link from "next/link";
-import type { Session } from "next-auth";
 
 interface ContactDetailPageProps {
   params: { id: string };
@@ -26,7 +25,7 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
 
   if (!contact) notFound();
 
-  const canReveal = canRevealSensitiveData(session as Session);
+  const canReveal = session ? canRevealSensitiveData(session) : false;
   let medicareDisplay = "****-****-****";
   if (contact.medicareNumberEnc) {
     if (canReveal) {
