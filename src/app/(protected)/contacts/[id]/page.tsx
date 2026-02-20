@@ -6,7 +6,7 @@ import { maskMedicareNumber, decrypt } from "@/lib/encryption";
 import Link from "next/link";
 
 interface ContactDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function ContactDetailPage({ params }: ContactDetailPageProps) {
@@ -14,8 +14,9 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
   const userId = (session?.user as { id?: string })?.id;
   if (!userId) return null;
 
+  const { id } = await params;
   const contact = await prisma.contact.findFirst({
-    where: { id: params.id },
+    where: { id },
     include: {
       tasks: { orderBy: { dueDate: "asc" }, take: 10 },
       activities: { orderBy: { occurredAt: "desc" }, take: 10 },

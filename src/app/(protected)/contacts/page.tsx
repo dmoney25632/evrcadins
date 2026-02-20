@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
 interface ContactsPageProps {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 }
 
 export default async function ContactsPage({ searchParams }: ContactsPageProps) {
@@ -11,7 +11,8 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   const userId = (session?.user as { id?: string })?.id;
   if (!userId) return null;
 
-  const query = searchParams.q || "";
+  const { q } = await searchParams;
+  const query = q || "";
 
   const contacts = await prisma.contact.findMany({
     where: {

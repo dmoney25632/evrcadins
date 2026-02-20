@@ -5,7 +5,7 @@ import { decrypt } from "@/lib/encryption";
 import ContactForm from "@/components/ContactForm";
 
 interface EditContactPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function EditContactPage({ params }: EditContactPageProps) {
@@ -13,8 +13,9 @@ export default async function EditContactPage({ params }: EditContactPageProps) 
   const userId = (session?.user as { id?: string })?.id;
   if (!userId) return null;
 
+  const { id } = await params;
   const contact = await prisma.contact.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
   if (!contact) notFound();
 

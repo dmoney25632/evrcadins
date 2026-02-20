@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { encrypt } from "@/lib/encryption";
 import { createAuditLog } from "@/lib/audit";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const userId = (session?.user as { id?: string })?.id;
   if (!userId) {
@@ -12,7 +12,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 
   try {
-    const existing = await prisma.contact.findUnique({ where: { id: params.id } });
+    const { id } = await params;
+    const existing = await prisma.contact.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Contact not found" }, { status: 404 });
     }
@@ -26,7 +27,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const updated = await prisma.contact.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         firstName,
         lastName,
@@ -47,7 +48,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       userId,
       action: "UPDATE",
       entity: "contacts",
-      entityId: params.id,
+      entityId: id,
       oldValue: { firstName: existing.firstName, lastName: existing.lastName },
       newValue: { firstName, lastName, email },
     });
@@ -58,7 +59,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const userId = (session?.user as { id?: string })?.id;
   if (!userId) {
@@ -66,7 +67,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   }
 
   try {
-    const existing = await prisma.contact.findUnique({ where: { id: params.id } });
+    const { id } = await params;
+    const existing = await prisma.contact.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Contact not found" }, { status: 404 });
     }
@@ -75,11 +77,11 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       userId,
       action: "DELETE",
       entity: "contacts",
-      entityId: params.id,
+      entityId: id,
       oldValue: { firstName: existing.firstName, lastName: existing.lastName },
     });
 
-    await prisma.contact.delete({ where: { id: params.id } });
+    await prisma.contact.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
