@@ -16,7 +16,7 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
 
   const { id } = await params;
   const contact = await prisma.contact.findFirst({
-    where: { id },
+    where: { id, agentId: userId },
     include: {
       tasks: { orderBy: { dueDate: "asc" }, take: 10 },
       activities: { orderBy: { occurredAt: "desc" }, take: 10 },
