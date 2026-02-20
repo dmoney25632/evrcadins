@@ -153,7 +153,7 @@ export default function TimeClockClient({ isClockedIn, openEntryId, todayEntries
                   <td className="px-4 py-3 text-sm">{format(new Date(entry.clockIn), "h:mm a")}</td>
                   <td className="px-4 py-3 text-sm">{entry.clockOut ? format(new Date(entry.clockOut), "h:mm a") : <span className="text-green-600">Active</span>}</td>
                   <td className="px-4 py-3 text-sm">{formatDuration(entry.clockIn, entry.clockOut)}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{entry.clockInGeo?.latitude ? `${entry.clockInGeo.latitude.toFixed(4)}, ${entry.clockInGeo.longitude?.toFixed(4)}` : "—"}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{entry.clockInGeo?.latitude != null && entry.clockInGeo?.longitude != null ? `${entry.clockInGeo.latitude.toFixed(4)}, ${entry.clockInGeo.longitude.toFixed(4)}` : "—"}</td>
                 </tr>
               ))}
             </tbody>
